@@ -7,7 +7,9 @@ class TaskService {
     return {
       tasksCompleted: taskList.filter((task) => task.completed).length,
       totalTasks: taskList.length,
-      latestTasks: taskList.sort((taskA, taskB) => taskB.id - taskA.id),
+      latestTasks: taskList
+        .sort((taskA, taskB) => taskB.id - taskA.id)
+        .slice(0, 3),
     };
   }
 
