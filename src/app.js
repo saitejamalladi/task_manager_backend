@@ -5,7 +5,7 @@ var cookieParser = require("cookie-parser");
 const swaggerUi = require("swagger-ui-express");
 const YAML = require("yamljs");
 const config = require("./config");
-const swaggerDocument = YAML.load("./swagger.yaml");
+const swaggerDocument = YAML.load("./src/swagger.yaml");
 
 var swaggerOptions = {
   customCss: ".swagger-ui .topbar { display: none }",
