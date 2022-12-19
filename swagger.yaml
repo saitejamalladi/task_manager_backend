@@ -1,0 +1,223 @@
+swagger: "2.0"
+
+info:
+  version: 1.0.0
+  title: Task Manager APIs
+  description: The Task Manager API document is intended strictly for internal use only.
+
+schemes:
+  - http
+host: localhost:8080
+
+securityDefinitions:
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+
+tags:
+  - name: "auth"
+    description: "Token generation"
+  - name: "dashboard"
+    description: "Access to dashboard information"
+  - name: "task"
+    description: "Access to task information"
+
+paths:
+  /login:
+    post:
+      tags:
+        - "auth"
+      summary: To generate an auth token.
+      description: This API generated the auth token based on name and app key shared.
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "auth object that needs to be shared to generate the token."
+          required: true
+          schema:
+            $ref: "#/definitions/Auth"
+      responses:
+        200:
+          description: The generated jwt token.
+          schema:
+            $ref: "#/definitions/AuthResponse"
+        400:
+          description: Something wrong in the body.
+        401:
+          description: Invalid credentials
+  /dashboard:
+    get:
+      security:
+        - Bearer: [ ]
+      tags:
+        - "dashboard"
+      summary: To get the dashboard data.
+      responses:
+        200:
+          description: Dashboard Data
+          schema:
+            type: object
+            properties:
+              tasksCompleted:
+                type: integer
+              totalTasks:
+                type: integer
+              latestTasks:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    name:
+                      type: string
+                    completed:
+                      type: boolean
+        400:
+          description: Something wrong in the body.
+        401:
+          description: Invalid credentials
+  /tasks:
+    get:
+      security:
+        - Bearer: [ ]
+      tags:
+        - "task"
+      summary: Get all tasks.
+      parameters:
+        - in: query
+          name: __search
+          schema:
+            type: string
+      responses:
+        200:
+          description: Task List
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/Task"
+        400:
+          description: Something wrong in the body.
+        401:
+          description: Invalid credentials
+    post:
+      security:
+        - Bearer: [ ]
+      tags:
+        - "task"
+      summary: Add new Task
+      parameters:
+        - in: "body"
+          name: "body"
+          description: "Task that needs to be created"
+          required: true
+          schema:
+            $ref: "#/definitions/Task"
+      responses:
+        200:
+          description: Task created successfully
+        400:
+          description: Something wrong in the body.
+        401:
+          description: Invalid credentials
+  /tasks/{id}:
+    put:
+      security:
+        - Bearer: [ ]
+      tags:
+        - "task"
+      summary: To update a Task
+      parameters:
+        - in: "path"
+          name: "id"
+          description: "The taskID to be updated"
+          required: true
+          type: integer
+        - in: "body"
+          name: "body"
+          description: "User that needs to be updated"
+          required: true
+          schema:
+            $ref: "#/definitions/Task"
+      responses:
+        200:
+          description: Task updated successfully
+        400:
+          description: Something wrong in the body.
+        401:
+          description: Invalid credentials
+    delete:
+      security:
+        - Bearer: [ ]
+      tags:
+        - "task"
+      summary: To delete a task based on id
+      parameters:
+        - in: "path"
+          name: "id"
+          description: "The task id to be deleted"
+          required: true
+          type: integer
+      responses:
+        200:
+          description: Task removed
+        400:
+          description: Something wrong in the body.
+        401:
+          description: Invalid credentials
+definitions:
+  Auth:
+    type: object
+    required:
+      - name
+      - apiKey
+    properties:
+      name:
+        type: string
+        example: Friduric Dimitrij
+        description: name of the user.
+      apiKey:
+        type: string
+        example: a5ce8a00-f00f-484d-b003-87e69e274ed3
+        description:  api key of the user.
+    xml:
+      name: "Auth"
+  AuthResponse:
+    type: object
+    properties:
+      token:
+        type: object
+        properties:
+          name:
+            type: string
+            example: Friduric Dimitrij
+            description: name of the user.
+          token:
+            type: string
+            example: a5ce8a00-f00f-484d-b003-87e69e274ed3
+            description: jwt token of the session.
+      image:
+        type: string
+        example: image url
+    xml:
+      name: "AuthResponse"
+  CreateTaskRequest:
+    type: object
+    required:
+      - name
+    properties:
+      name:
+        type: string
+        example: Task ABC
+    xml:
+      name: "CreateTaskRequest"
+  Task:
+    type: object
+    properties:
+      name:
+        type: string
+        example: Task ABC
+      completed:
+        type: boolean
+        example: false
+    xml:
+      name: "Task"

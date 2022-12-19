@@ -1,0 +1,5 @@
+module.exports = {
+  GENERATE_TOKEN: "GENERATE_TOKEN",
+  CREATE: "CREATE",
+  UPDATE: "UPDATE",
+};
